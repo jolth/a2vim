@@ -56,6 +56,11 @@ call plug#end()
 EOF
 }
 
+vim_support() {
+    vim --version|grep --color -E 'python|lua'
+    success "verificated vim support"
+}
+
 vim_conf() {
 cat << EOF > $VIMRC
 " Disable compatibility with vi which can cause unexpected issues.
@@ -75,20 +80,8 @@ set number
 "set cursorline
 " Highlight cursor line underneath the cursor vertically.
 "set cursorcolumn
-" Set shift width to 4 spaces.
-set shiftwidth=4
-" Set tab width to 4 columns.
-set tabstop=4
-" Use space characters instead of tabs.
-set expandtab
-" Enabling Automatic Indentation
-set autoindent
 " Do not save backup files.
 set nobackup
-" Removing Multiple Spaces on Single Backspace
-set softtabstop=4
-" Do not wrap lines. Allow long lines to extend as far as the line goes.
-set nowrap
 " While searching though a file incrementally highlight matching characters as you type.
 set incsearch
 " Ignore capital letters during search.
@@ -108,14 +101,35 @@ set showmode
 set scrolloff=10
 " Set the commands to save in history default number is 20.
 set history=1000
+
+
 "colorscheme: default, blue, darkblue, delek, desert, 
 "elford, evening, industry, koehler, morning, murphy, 
 "pablo, peachpuff, ron, shine, slate, torte, zellner  
 colorscheme default
 
-" ----------------------------------------------------------------------------
+"***************************************************************************
+"  Formatting
+"***************************************************************************
+set autoread               " set to auto read when a file is changed from the outside
+set encoding=utf-8         " set utf8 as standard encoding and en_US as the standard language
+"inoremap # X<BS>#
+set nowrap                 " Dot not wrap lines. to display long lines as just one line (i.e. you have to scroll horizontally to see the entire line)
+set ffs=unix,dos,mac       " use Unix as the standard file type
+set softtabstop=2          " insert/delete # spaces when hitting a TAB/BACKSPACE (for python 'set softtabstop=4')
+set shiftwidth=2           " operation >> indents 4 columns; << unindents 4 columns
+set tabstop=4              " a hard TAB displays as 4 columns. a tab is four spaces
+set autoindent             " automatic indent new lines, align the new line indent with the previous line
+set smartindent            " be smart about it. like above but more generic
+set expandtab              " use space characters instead of TAB, insert spaces when hitting TABs
+set nosmarttab             " fuck tabs
+set textwidth=180           " lines longer than 179 columns will be broken
+set colorcolumn=+1         " color column 180
+
+
+"***************************************************************************
 "  Remapping
-" ----------------------------------------------------------------------------
+"***************************************************************************
 " With a map leader it's possible to do extra key combinations
 " like <leader>w saves the current file
 " Change the mapleader from \ to ,
@@ -155,6 +169,18 @@ nnoremap <leader>N :setlocal number!<cr>
 "nmap l :set list!<CR>
 nmap <leader>l :set list!<CR>
 
+"***************************************************************************
+"  Python
+"***************************************************************************
+augroup .py
+    autocmd!
+    autocmd FileType foo setlocal softtabstop=0 noexpandtab nosmarttab shiftwidth=4 tabstop=4 textwidth=80
+augroup END
+"***************************************************************************
+"  HMTL
+"***************************************************************************
+autocmd FileType html setlocal textwidth=500
+
 EOF
 
 echo "bind -r '\C-s' ; stty -ixon" >> $HOME/.bashrc && source $HOME/.bashrc
@@ -166,8 +192,7 @@ success "loaded vimrc basic " "config"
 
 
 #main() {
-
-
+vim_support;
 vim_conf
 #vim_plu
 
