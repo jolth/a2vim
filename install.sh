@@ -38,9 +38,12 @@ output_clear () {
 A2VIMDIR=$HOME/.vim
 VIMRC=$HOME/.vimrc
 
-if [ -d $HOME/.vim ]; then
-	mv $HOME/.vim{,_$(date +"%s")};
-fi
+a2vimdir() {
+  if [ -d $HOME/.vim ]; then
+    mv $HOME/.vim{,_$(date +"%s")};
+  fi
+  mkdir $A2VIMDIR
+}
 
 vim_plu() {
     echo "Install vim-plug"
@@ -57,8 +60,8 @@ EOF
 }
 
 vim_support() {
-    vim --version|grep --color -E 'python|lua'
-    success "verificated vim support"
+  vim --version|grep --color -E 'python|lua'
+  success "verificated vim support"
 }
 
 vim_conf() {
@@ -81,7 +84,7 @@ set number
 " Highlight cursor line underneath the cursor vertically.
 "set cursorcolumn
 " Do not save backup files.
-set nobackup
+"set nobackup
 " While searching though a file incrementally highlight matching characters as you type.
 set incsearch
 " Ignore capital letters during search.
@@ -181,10 +184,28 @@ augroup END
 "***************************************************************************
 autocmd FileType html setlocal textwidth=500
 
+"***************************************************************************
+"  Others
+"***************************************************************************
+" persistent undo
+set undofile                  " Maintain undo history between sessions
+set undodir=~/.vim/undodir    " Dedicated directory for these undo history files
+
+" Uncomment the following to have Vim jump to the last position when
+" reopening a file
+if has("autocmd")
+  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+endif
+
 EOF
 
 echo "bind -r '\C-s' ; stty -ixon" >> $HOME/.bashrc && source $HOME/.bashrc
 success "loaded vimrc basic " "config"
+
+}
+
+persistent_undo() {
+  mkdir $A2VIMDIR/undodir
 }
 
 #nerdtree_conf() {
@@ -192,8 +213,10 @@ success "loaded vimrc basic " "config"
 
 
 #main() {
+a2vimdir
 vim_support;
 vim_conf
+persistent_undo
 #vim_plu
 
 #}
