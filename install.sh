@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 # 
-# Jolth <jolthgs@gmail.com> 
+# Copyright (c) 2021 Jolth <jolthgs at gmail.com>
 # https://github.com/jolth/a2vim
 # License: MIT
 #
