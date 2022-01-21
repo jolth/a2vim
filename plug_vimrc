@@ -1,0 +1,335 @@
+" curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+" mkdir ~/.vim/undodir 
+" mkdir ~/.vim/swp
+" https://github.com/neoclide/coc.nvim/wiki/Install-coc.nvim
+" :PlugInstall
+" :CocInstall coc-tsserver coc-json coc-html coc-css coc-pyright coc-rls
+
+"===========================================================================
+" General
+"===========================================================================
+set nocompatible                        "Use Vim settings, rather then Vi settings (it influences other options)
+set backspace=indent,eol,start          "Allow backspacing over indention, line breaks and insertion start.
+set history=1000                        " Set the commands to save in history default number is 20.
+set showcmd                             "Show incomplete commands at the bottom
+set showmode                            "Show current mode at the bottom
+set hidden                              "Manage multiple buffers effectively (Needed to keep multiple buffers open)
+set cursorcolumn                       " Highlight cursor line underneath the cursor vertically.
+
+set path+=**          " Searches current directory recursively.
+set t_Co=256                    " Set if term supports 256 colors.
+set clipboard=unnamedplus       " Copy/paste between vim and other programs.
+let g:rehash256 = 1             " to avoid Normal text being black
+
+"===========================================================================
+" vim-plug
+"===========================================================================
+call plug#begin()
+
+" colorschemes
+Plug 'arcticicestudio/nord-vim'
+Plug 'dracula/vim', { 'as': 'dracula' }
+Plug 'cocopon/iceberg.vim'
+" statusline
+Plug 'itchyny/lightline.vim' |
+            \ Plug 'gkeep/iceberg-dark' |                 " https://github.com/gkeep/iceberg-dark
+            \ Plug 'mengelbrecht/lightline-bufferline'    " Tabline / Bufferline: https://github.com/mengelbrecht/lightline-bufferline
+" Git https://github.com/tpope/vim-fugitive
+Plug 'tpope/vim-fugitive'
+" https://github.com/preservim/nerdtree
+Plug 'preservim/nerdtree' |
+            \ Plug 'Xuyuanp/nerdtree-git-plugin' |
+            \ Plug 'ryanoasis/vim-devicons'
+" https://github.com/mhinz/vim-signify/
+if has('nvim') || has('patch-8.0.902')
+  Plug 'mhinz/vim-signify'
+else
+  Plug 'mhinz/vim-signify', { 'branch': 'legacy' }
+endif
+" https://github.com/jiangmiao/auto-pairs
+Plug 'jiangmiao/auto-pairs', {'for': 'python'}
+
+""" Rust:
+" https://github.com/rust-lang/rust.vim
+"Plug 'rust-lang/rust.vim', {'for', 'rust'}
+
+""" Python:
+" python-mode: https://github.com/python-mode/python-mode
+Plug 'python-mode/python-mode', { 'for': 'python', 'branch': 'develop' }
+" coc.vim: https://github.com/neoclide/coc.nvim and https://github.com/neoclide/coc.nvim/wiki/Install-coc.nvim
+"Install extensions: CocInstall coc-tsserver coc-json coc-html coc-css coc-pyright coc-rls
+" Use release branch (recommend)
+
+""" Javascript:
+" https://github.com/pangloss/vim-javascript
+"Plug 'pangloss/vim-javascript'
+
+""" coc:
+"Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Or build from source code by using yarn: https://yarnpkg.com
+Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'yarn install --frozen-lockfile'}
+
+call plug#end()
+
+"===========================================================================
+" Interface
+"===========================================================================
+set ruler                               "Always show cursor position
+set wildmenu                            "Display command line's tab complete options as a menu
+set tabpagemax=40                       "Maximum number of tab pages that can be opened from the command line
+"set cursorline                         "Highlight the line currently under cursor
+set number                              "Show line numbers on sidebar
+set relativenumber
+set noerrorbells                        "Disable beep on errors.
+set visualbell                          "Flash the screen instead of beeping on errors
+set mouse=a                             "Enable mouse for scrolling and resizing
+set title                               "Set the window’s title, reflecting the file currently being edited
+set background=dark                     "Use colors that suit a dark background
+"colorscheme: default, blue, darkblue, delek, desert, 
+"elford, evening, industry, koehler, morning, murphy, 
+"pablo, peachpuff, ron, shine, slate, torte, zellner  
+"colorscheme pablo
+"colorscheme elflord
+
+"colorscheme nord
+"colorscheme dracula
+colorscheme iceberg
+
+"===========================================================================
+"  Indentation
+"===========================================================================
+set autoindent                          " automatic indent new lines, align the new line indent with the previous line
+filetype off 
+" Enable type file detection. Vim will be able to try to detect the type of file in use.
+"filetype on
+" Enable plugins and load plugin for the detected file type.
+"filetype plugin on
+" Load an indent file for the detected file type.
+"filetype indent on
+filetype plugin indent on               "Smart auto indentation (instead of old smartindent option)
+
+"===========================================================================
+"  Formatting
+"===========================================================================
+set autoread               " set to auto read when a file is changed from the outside
+set encoding=utf-8         " set utf8 as standard encoding and en_US as the standard language
+"inoremap # X<BS>#
+set nowrap                 " Dot not wrap lines. to display long lines as just one line (i.e. you have to scroll horizontally to see the entire line)
+set ffs=unix,dos,mac       " use Unix as the standard file type
+set softtabstop=2          " insert/delete # spaces when hitting a TAB/BACKSPACE (Indent by 2 spaces when hitting tab. For python 'set softtabstop=4')
+set tabstop=4              " Show existing tab with 4 space width
+set shiftwidth=4           " operation >> indents 4 columns; << unindents 4 columns (Indent by 4 spaces when auto-indenting)
+set smartindent            " be smart about it. like above but more generic
+set expandtab              " use space characters instead of TAB, insert spaces when hitting TABs
+set nosmarttab             " fuck tabs
+set textwidth=180           " lines longer than 179 columns will be broken
+set colorcolumn=+1         " color column 180
+
+"===========================================================================
+"  Search
+"===========================================================================
+set incsearch                           "Find the next match as we type the search
+set hlsearch                            "Highlight searches by default.
+set ignorecase
+" Override the ignorecase option if searching for capital letters.
+" This will allow you to search specifically for capital letters.
+set smartcase                           " ... unless you type a capital.
+set showmatch                           " Show matching words during a search.
+
+"===========================================================================
+" Text rendering options:
+"===========================================================================
+set linebreak                           "Wrap lines at convenient points, avoid wrapping a line in the middle of a word.
+set scrolloff=10                        "The number of screen lines to keep above and below the cursor
+set sidescrolloff=5                     "The number of screen columns to keep to the left and right of the cursor.
+syntax enable                           "Enable syntax highlighting.
+
+"===========================================================================
+"  Miscellaneous 
+"===========================================================================
+set confirm                             "Display a confirmation dialog when closing an unsaved file.
+set nomodeline                          "Ignore file’s mode lines; use vimrc configurations instead.
+set nrformats-=octal                    "Interpret octal as decimal when incrementing numbers.
+"set shell==/usr/bin/zsh                "The shell used to execute commands.
+"set spell                              "Enable spellchecking.
+
+"===========================================================================
+"  Remapping:                                                                                                                                                                        
+" ,         <leader>                                                                                                                                                                 
+" jk        <esc> or escape to NORMAL MODE                                                                                                                                           
+" Q         quit                                                                                                                                                                     
+" ,,        save and exit (INSERT/NORMAL MODE)                                                                                                                                       
+" Ctrl+q    to exit and discarding changes                                                                                                                                           
+" Ctrl+s    to save                                                                                                                                                                  
+" Ctrl+d    save and exit (INSERT/NORMAL MODE)                                   
+"===========================================================================
+" With a map leader it's possible to do extra key combinations
+" like <leader>w saves the current file
+" Change the mapleader from \ to ,
+let mapleader = ","
+let g:mapleader = ","
+" exit to normal mode with 'jk'
+inoremap jk <esc>
+" allow quit via single keypress (Q). If you have unsaved buffers, it'll prompt you before exiting.
+map Q :qa<CR>
+" normal mode: saves the file and exits. keypress ,,
+nnoremap <leader><leader> :x<cr>
+" insert mode: saves the file and exits. keypress ,,
+inoremap <leader><leader> <esc>:xa<cr>
+"----- Keymaps in Insert mode:
+"ctrl + q: to exit discarding changes.
+inoremap <c-q> <esc>:qa!<cr>                " quit discarding changes
+"ctrl + s: to save.
+inoremap <c-s> <esc>:w<cr>a
+"ctrl + d: to save and exit
+inoremap <c-d> <esc>:wq!<cr>               " save and exit
+"----- Keymaps in Normal mode:
+"ctrl + d: to save and exit
+nnoremap <c-d> :wq!<cr>
+"ctrl + s: to save.
+"nmap <c-s> :w<cr>
+nnoremap <c-s> :w<cr>
+"ctrl + q: to exit discarding changes.
+nnoremap <c-q> :qa!<cr>
+
+" You can toggle the syntax on/off with keyup <F7>:
+map <F7> :if exists("g:syntax_on") <Bar> syntax off <Bar> else <Bar> syntax enable <Bar> endif <CR>
+" This appends the current date and time after the cursor:
+"map <F2> a<C-R>=strftime("%c")<CR><Esc>
+" use <leader>N toggle line numbers on/off
+nnoremap <leader>n :setlocal number! relativenumber!<cr>
+" use <leader>l to toggle display of whitespace
+"nmap l :set list!<CR>
+nmap <leader>l :set list!<CR>
+
+" <TAB>: completion.
+inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+
+"===========================================================================
+"  Python
+"===========================================================================
+augroup .py
+    autocmd!
+    autocmd FileType foo setlocal softtabstop=0 noexpandtab nosmarttab shiftwidth=4 tabstop=4 textwidth=79
+augroup END
+"===========================================================================
+"  HMTL
+"===========================================================================
+autocmd FileType html setlocal textwidth=500
+
+"===========================================================================
+"  Others
+"===========================================================================
+" Persistent undo
+set undofile                  " Maintain undo history between sessions
+set undodir=~/.vim/undodir    " Dedicated directory for these undo history files
+
+" Swap file
+"set noswapfile                " Disable swap file
+set swapfile
+set directory=~/.vim/swp//    " Swap file organizaion. save all the swap files in location. 
+
+" Backup files
+set nobackup                    " No auto backups
+set nowb
+"set backup
+"set writebackup
+"set backupdir=~/.vim/.backup//
+
+" Uncomment the following to have Vim jump to the last position when
+" reopening a file
+if has("autocmd")
+  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+endif
+
+"===========================================================================
+" Plug 
+"===========================================================================
+""""""""""" lightline.vim
+set laststatus=2
+set noshowmode
+
+if !has('gui_running')
+      set t_Co=256
+  endif
+
+let g:lightline = {
+      \ 'colorscheme': 'icebergDark',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'FugitiveHead'
+      \ },
+      \ }
+
+"""""""""" lightline-bufferline
+set showtabline=2
+
+let s:nbsp = ' '
+let g:lightline#bufferline#filename_modifier = ":t".s:nbsp
+let g:lightline#bufferline#shorten_path      = 1
+let g:lightline#bufferline#show_number       = 2
+let g:lightline#bufferline#min_buffer_count  = 0
+let g:lightline#bufferline#unnamed           = '[No Name]'
+let g:lightline#bufferline#read_only         = '  '
+let g:lightline#bufferline#modified          = " + "
+let g:lightline#bufferline#enable_devicons = 1
+let g:lightline#bufferline#unicode_symbols = 1
+let g:lightline#bufferline#number_map = {
+\ 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴',
+\ 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹'}
+" \ 0: '₀', 1: '₁', 2: '₂', 3: '₃', 4: '₄',
+" \ 5: '₅', 6: '₆', 7: '₇', 8: '₈', 9: '₉'}
+let g:lightline#gitdiff#indicator_added = ': '
+let g:lightline#gitdiff#indicator_deleted = ': '
+let g:lightline#gitdiff#indicator_modified = 'ﰲ: '
+let g:lightline#gitdiff#separator = ' '
+"let g:lightline#gitdiff#show_empty_indicators = 1
+
+""""""""""  vim-signify
+" default updatetime 4000ms is not good for async update
+set updatetime=100
+
+""""""""""  Nerdtree
+" Uncomment to autostart the NERDTree
+" autocmd vimenter * NERDTree
+let g:NERDTreeDirArrowExpandable = '►'
+let g:NERDTreeDirArrowCollapsible = '▼'
+"let NERDTreeShowLineNumbers = 1
+let NERDTreeShowBookmarks = 1
+let NERDTreeIgnore = ['.git$', '.swo$', '.swp$', '.pyc$', '.pyo$', '__pycache__$']
+let NERDTreeChDirMode = 0                 " Set the current working directory to the directory NERDtree was opened in
+let NERDTreeShowHidden = 1                " Display hidden files by default
+let NERDTreeMinimalUI = 1
+let g:NERDTreeWinSize = 30
+let NERDTreeQuitOnOpen = 1                " Automatically close when you open a file
+let NERDTreeMinimalUI = 1
+let NERDTreeDirArrows = 1
+"let NERDTreeKeepTreeInNewTab=1
+"nnoremap <leader>n :NERDTreeFocus<CR>
+"nnoremap <C-n> :NERDTree<CR>
+nnoremap <C-t> :NERDTreeToggle<CR>        " Toggle the NERDtree window open and closed with Ctrl+t
+nnoremap <C-f> :NERDTreeFind<CR>          " to open the file explorer with the cursor focus set to the file in your current vim buffer
+" Exit Vim if NERDTree is the only window remaining in the only tab.
+autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+" Close the tab if NERDTree is the only window remaining in it.
+autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+" Start NERDTree, unless a file or session is specified, eg. vim -S session_file.vim.
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists('s:std_in') && v:this_session == '' | NERDTree | endif
+
+"""""""""	Nerdtree-git
+let g:NERDTreeGitStatusIndicatorMapCustom = {
+                \ 'Modified'  :'✹',
+                \ 'Staged'    :'✚',
+                \ 'Untracked' :'✭',
+                \ 'Renamed'   :'➜',
+                \ 'Unmerged'  :'═',
+                \ 'Deleted'   :'✖',
+                \ 'Dirty'     :'✗',
+                \ 'Ignored'   :'☒',
+                \ 'Clean'     :'✔︎',
+                \ 'Unknown'   :'?',
+                \ }
