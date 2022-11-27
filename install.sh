@@ -213,9 +213,9 @@ set statusline=                          " left align
 set statusline+=%2*\                     " blank char
 set statusline+=%2*\%{StatuslineMode()}
 set statusline+=%2*\
-set statusline+=%1*\ <<
-set statusline+=%1*\ %f                  " short filename              
-set statusline+=%1*\ >>
+set statusline+=%1*[
+set statusline+=%1*\%f                  " short filename
+set statusline+=%1*]
 set statusline+=%=                       " right align
 set statusline+=%*
 set statusline+=%3*\%h%m%r               " file flags (help, read-only, modified)
@@ -264,7 +264,7 @@ augroup END
 "===========================================================================
 augroup .py
     autocmd!
-    autocmd FileType foo setlocal softtabstop=0 noexpandtab nosmarttab shiftwidth=4 tabstop=4 textwidth=80
+    autocmd FileType foo setlocal softtabstop=0 noexpandtab nosmarttab shiftwidth=4 tabstop=4 textwidth=79
 augroup END
 "===========================================================================
 "  HMTL

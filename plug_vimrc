@@ -3,8 +3,23 @@
 " mkdir ~/.vim/swp
 " https://github.com/neoclide/coc.nvim/wiki/Install-coc.nvim
 " :PlugInstall
-" :CocInstall coc-tsserver coc-json coc-html coc-css coc-pyright coc-rls
+" :CocInstall coc-diagnostic coc-sh coc-json coc-clangd
+" :CocInstall coc-tsserver coc-json coc-html coc-css coc-pyright coc-rls coc-prettier
 
+" others Coc: coc-word coc-snippets
+" C/C++ Coc: https://github.com/clangd/coc-clangd
+"
+"===========================================================================
+" Coc:
+" Rust 
+" https://github.com/neoclide/coc-rls
+" https://github.com/neoclide/coc-rls
+" https://github.com/fannheyward/coc-rust-analyzer
+"
+" https://github.com/rust-lang/rust.vim
+" Dart:
+" https://github.com/theniceboy/coc-flutter-tools
+"===========================================================================
 "===========================================================================
 " General
 "===========================================================================
@@ -20,6 +35,14 @@ set path+=**          " Searches current directory recursively.
 set t_Co=256                    " Set if term supports 256 colors.
 set clipboard=unnamedplus       " Copy/paste between vim and other programs.
 let g:rehash256 = 1             " to avoid Normal text being black
+
+" Give more space for displaying messages.
+set cmdheight=2
+" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
+" delays and poor user experience.
+set updatetime=300
+" Don't pass messages to |ins-completion-menu|.
+set shortmess+=c
 
 "===========================================================================
 " vim-plug
@@ -47,11 +70,12 @@ else
   Plug 'mhinz/vim-signify', { 'branch': 'legacy' }
 endif
 " https://github.com/jiangmiao/auto-pairs
-Plug 'jiangmiao/auto-pairs', {'for': 'python'}
+Plug 'jiangmiao/auto-pairs', {'for': ['python', 'javascript', 'rust', 'dart', 'c', 'css']}
 
 """ Rust:
 " https://github.com/rust-lang/rust.vim
 "Plug 'rust-lang/rust.vim', {'for', 'rust'}
+Plug 'rust-lang/rust.vim'
 
 """ Python:
 " python-mode: https://github.com/python-mode/python-mode
@@ -60,14 +84,22 @@ Plug 'python-mode/python-mode', { 'for': 'python', 'branch': 'develop' }
 "Install extensions: CocInstall coc-tsserver coc-json coc-html coc-css coc-pyright coc-rls
 " Use release branch (recommend)
 
+"Kivy syntax highlighting
+"Plug 'farfanoide/vim-kivy'
+
+""" HTML:
+" https://github.com/mattn/emmet-vim
+Plug 'mattn/emmet-vim', {'for': ['html', 'css']}
+"Plug 'turbio/bracey.vim'
+Plug 'turbio/bracey.vim', {'do': 'npm install --prefix server'}
 """ Javascript:
 " https://github.com/pangloss/vim-javascript
 "Plug 'pangloss/vim-javascript'
 
 """ coc:
-"Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " Or build from source code by using yarn: https://yarnpkg.com
-Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'yarn install --frozen-lockfile'}
+"Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'yarn install --frozen-lockfile'}
 
 call plug#end()
 
@@ -158,10 +190,14 @@ set nrformats-=octal                    "Interpret octal as decimal when increme
 " ,         <leader>                                                                                                                                                                 
 " jk        <esc> or escape to NORMAL MODE                                                                                                                                           
 " Q         quit                                                                                                                                                                     
+" Ctrl+q    to exit and discarding changes (INSERT/NORMAL MODE)                                                                                                                                             
 " ,,        save and exit (INSERT/NORMAL MODE)                                                                                                                                       
-" Ctrl+q    to exit and discarding changes                                                                                                                                           
-" Ctrl+s    to save                                                                                                                                                                  
-" Ctrl+d    save and exit (INSERT/NORMAL MODE)                                   
+" Ctrl+d    save and exit (INSERT/NORMAL MODE)                                  
+" Ctrl+s    save (INSERT/NORMAL MODE) 
+" F7        Syntax off/on
+" ,n        Line numbers off/on
+" ,l        Display of whitespace
+"
 "===========================================================================
 " With a map leader it's possible to do extra key combinations
 " like <leader>w saves the current file
@@ -171,7 +207,8 @@ let g:mapleader = ","
 " exit to normal mode with 'jk'
 inoremap jk <esc>
 " allow quit via single keypress (Q). If you have unsaved buffers, it'll prompt you before exiting.
-map Q :qa<CR>
+map Q :q<CR>
+"map <c-Q> :qa<CR>
 " normal mode: saves the file and exits. keypress ,,
 nnoremap <leader><leader> :x<cr>
 " insert mode: saves the file and exits. keypress ,,
@@ -201,10 +238,34 @@ nnoremap <leader>n :setlocal number! relativenumber!<cr>
 " use <leader>l to toggle display of whitespace
 "nmap l :set list!<CR>
 nmap <leader>l :set list!<CR>
-
 " <TAB>: completion.
-inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+"inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 
+"===========================================================================
+" Using tab pages: 
+" gt        Next tab
+" gT        Prior tab
+" [1-0]gt   Numbered tab
+" ctrl-w T  If current file is part of a split view, then open currently selected split as a new tab
+" :tabedit or :tabe FILENAME   Open a file in a new tab
+" :tabmove #      Move current tab to position # (Without #, Move current tab to the end)
+"===========================================================================
+noremap <leader>1 1gt
+noremap <leader>2 2gt
+noremap <leader>3 3gt
+noremap <leader>4 4gt
+noremap <leader>5 5gt
+noremap <leader>6 6gt
+noremap <leader>7 7gt
+noremap <leader>8 8gt
+noremap <leader>9 9gt
+noremap <leader>0 :tablast<cr>
+
+map <leader>tn :tabnew<cr>
+map <leader>t<leader> :tabnext
+map <leader>tm :tabmove
+map <leader>tc :tabclose<cr>
+map <leader>to :tabonly<cr>
 "===========================================================================
 "  Python
 "===========================================================================
@@ -212,11 +273,17 @@ augroup .py
     autocmd!
     autocmd FileType foo setlocal softtabstop=0 noexpandtab nosmarttab shiftwidth=4 tabstop=4 textwidth=79
 augroup END
+
 "===========================================================================
 "  HMTL
 "===========================================================================
-autocmd FileType html setlocal textwidth=500
+"autocmd FileType html setlocal textwidth=500
+autocmd FileType html setlocal softtabstop=0 noexpandtab nosmarttab shiftwidth=2 tabstop=2 textwidth=100
 
+"===========================================================================
+"  CSS
+"===========================================================================
+autocmd FileType scss setl iskeyword+=@-@
 "===========================================================================
 "  Others
 "===========================================================================
@@ -226,12 +293,13 @@ set undodir=~/.vim/undodir    " Dedicated directory for these undo history files
 
 " Swap file
 "set noswapfile                " Disable swap file
-set swapfile
-set directory=~/.vim/swp//    " Swap file organizaion. save all the swap files in location. 
+"set swapfile
+"set directory=~/.vim/swp//    " Swap file organizaion. save all the swap files in location. 
 
 " Backup files
+" Some servers have issues with backup files, see #649.
 set nobackup                    " No auto backups
-set nowb
+set nowritebackup
 "set backup
 "set writebackup
 "set backupdir=~/.vim/.backup//
@@ -243,8 +311,114 @@ if has("autocmd")
 endif
 
 "===========================================================================
+" Commands Coc
+"
+" :CocInfo or :checkhealth (Neovim)
+" :CocOpenLog
+" :CocLocalConfig
+" :CocConfig
+" :CocList extensions
+"
+"===========================================================================
+"
+" ,cd             CocDiagnostics
+" ,cdk            CocDiagnostics prev
+" ,cdj            CocDiagnostics next
+" gd              GoTo definition
+" gy              GoTo type definition
+" gi              GoTo implementation
+" gw              GoTo references
+" K               Show Documentation
+" ,rn             Symbol renaming
+" ,f              Formatting selected code: JavaScript/TypeScript/CSS/JSON
+"===========================================================================
+" Always show the signcolumn, otherwise it would shift the text each time
+" diagnostics appear/become resolved.
+if has("nvim-0.5.0") || has("patch-8.1.1564")
+  " Recently vim can merge signcolumn and number column into one
+  set signcolumn=number
+else
+  set signcolumn=yes
+endif
+
+" Use tab for trigger completion with characters ahead and navigate.
+" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+" other plugin before putting this into your config.
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Use <c-space> to trigger completion.
+if has('nvim')
+  inoremap <silent><expr> <c-space> coc#refresh()
+else
+  inoremap <silent><expr> <c-@> coc#refresh()
+endif
+
+" Make <CR> auto-select the first completion item and notify coc.nvim to
+" format on enter, <cr> could be remapped by other vim plugin
+inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+" Use `[g` and `]g` to navigate diagnostics
+" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
+nmap <leader>cd :CocDiagnostics<cr>
+nmap <silent> ,cdk <Plug>(coc-diagnostic-prev)
+nmap <silent> ,cdj <Plug>(coc-diagnostic-next)
+
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Use K to show documentation in preview window.
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  elseif (coc#rpc#ready())
+    call CocActionAsync('doHover')
+  else
+    execute '!' . &keywordprg . " " . expand('<cword>')
+  endif
+endfunction
+
+" Highlight the symbol and its references when holding the cursor.
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Symbol renaming.
+nmap <leader>rn <Plug>(coc-rename)
+
+" Formatting selected code.
+xmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
+
+augroup mygroup
+  autocmd!
+  " Setup formatexpr specified filetype(s).
+  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  " Update signature help on jump placeholder.
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup end
+
+"===========================================================================
 " Plug 
 "===========================================================================
+""""""""""" Emmet:
+let g:user_emmet_mode='a'    "enable all function in all mode.
+"Enable just for html/css
+let g:user_emmet_install_global = 0
+autocmd FileType html,css EmmetInstall
+
 """"""""""" lightline.vim
 set laststatus=2
 set noshowmode
@@ -267,6 +441,16 @@ let g:lightline = {
 """""""""" lightline-bufferline
 set showtabline=2
 
+
+let g:lightline = { 'colorscheme': 'PaperColor' }
+let g:lightline.tabline = {
+            \ 'left': [ [ 'tabs' ] ],
+            \ 'right': [ [ 'bufnum'] ] }
+let g:lightline.separator = { 'left': '', 'right': '' }
+let g:lightline.subseparator = {'left': '', 'right': '' }
+let g:lightline.component_expand = {'buffers': 'lightline#bufferline#buffers'}
+let g:lightline.component_type   = {'buffers': 'tabsel'}
+
 let s:nbsp = ' '
 let g:lightline#bufferline#filename_modifier = ":t".s:nbsp
 let g:lightline#bufferline#shorten_path      = 1
@@ -286,12 +470,8 @@ let g:lightline#gitdiff#indicator_added = ': '
 let g:lightline#gitdiff#indicator_deleted = ': '
 let g:lightline#gitdiff#indicator_modified = 'ﰲ: '
 let g:lightline#gitdiff#separator = ' '
-"let g:lightline#gitdiff#show_empty_indicators = 1
 
-""""""""""  vim-signify
-" default updatetime 4000ms is not good for async update
-set updatetime=100
-
+autocmd BufWritePost,TextChanged,TextChangedI * call lightline#update()
 """"""""""  Nerdtree
 " Uncomment to autostart the NERDTree
 " autocmd vimenter * NERDTree
@@ -304,10 +484,11 @@ let NERDTreeChDirMode = 0                 " Set the current working directory to
 let NERDTreeShowHidden = 1                " Display hidden files by default
 let NERDTreeMinimalUI = 1
 let g:NERDTreeWinSize = 30
-let NERDTreeQuitOnOpen = 1                " Automatically close when you open a file
+"let NERDTreeQuitOnOpen = 1                " Automatically close when you open a file
 let NERDTreeMinimalUI = 1
 let NERDTreeDirArrows = 1
-"let NERDTreeKeepTreeInNewTab=1
+let NERDTreeKeepTreeInNewTab=1
+let NERDTreeWinPos=1                      " Open on the right side
 "nnoremap <leader>n :NERDTreeFocus<CR>
 "nnoremap <C-n> :NERDTree<CR>
 nnoremap <C-t> :NERDTreeToggle<CR>        " Toggle the NERDtree window open and closed with Ctrl+t
@@ -319,6 +500,8 @@ autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTa
 " Start NERDTree, unless a file or session is specified, eg. vim -S session_file.vim.
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists('s:std_in') && v:this_session == '' | NERDTree | endif
+" Open the existing NERDTree on each new tab.
+autocmd BufWinEnter * if getcmdwintype() == '' | silent NERDTreeMirror | endif
 
 """""""""	Nerdtree-git
 let g:NERDTreeGitStatusIndicatorMapCustom = {
